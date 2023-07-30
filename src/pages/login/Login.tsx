@@ -17,7 +17,7 @@ const Login = () => {
           <div className="flex justify-center ">{/* <img width={500} src={spotifyLogo} alt="" /> */}</div>
           <div className="flex justify-center pt-[50px]">
             <button className="bg-white w-[150px] h-[45px] text-black px-4 py-2 rounded-[16px]" onClick={handleButton}>
-              LOG IN
+              Get Started
             </button>
           </div>
         </div>

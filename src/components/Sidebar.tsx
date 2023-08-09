@@ -3,14 +3,16 @@ import styled from 'styled-components';
 import { FaHouse, FaRecordVinyl, FaSpotify, FaPlus } from 'react-icons/fa6';
 import { useAtom } from 'jotai';
 import { playlistStore } from '../stores/playlist';
+import { userInfoStore } from '../stores/userInfo';
 import { baseService } from '../services/api';
 
 const Sidebar = () => {
-  const userId = sessionStorage.getItem('userId');
+  const [userInfo] = useAtom(userInfoStore);
   const [playlist, setPlaylist] = useAtom(playlistStore);
+
   const getUserPlaylist = (): void => {
     baseService
-      .getJSON(`/v1/users/${userId}/playlists`)
+      .getJSON(`/v1/users/${userInfo.userId}/playlists`)
       .then((resp) => {
         const tempPlaylist = resp.data.items.map((o: any) => ({
           id: o.id,
@@ -36,7 +38,7 @@ const Sidebar = () => {
       public: false,
     };
     // baseService
-    //   .postJSON(`/v1/users/${userId}/playlists`, payload)
+    //   .postJSON(`/v1/users/${userInfo.userId}/playlists`, payload)
     //   .then((resp) => {
     //     console.log(resp);
     //   })
@@ -48,7 +50,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     getUserPlaylist();
-  }, []);
+  }, [userInfo.userId]);
 
   return (
     <Container>

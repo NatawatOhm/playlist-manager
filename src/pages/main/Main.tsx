@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { userInfoStore } from '../../stores/userInfo';
 import { baseService } from '../../services/api';
 import { useNavigate } from 'react-router';
 import MainLayout from '../MainLayout';
@@ -6,6 +8,7 @@ import Header from '../../components/Header';
 
 const Main = () => {
   const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useAtom(userInfoStore);
 
   const setToken = (): void => {
     const queryParams = new URLSearchParams(window.location.hash.substring(1));
@@ -26,21 +29,34 @@ const Main = () => {
       .getJSON('/v1/me')
       .then((resp) => {
         if (resp.data != null) {
-          //   console.log(resp.data);
-          sessionStorage.setItem('profileImgUrl', resp.data.images[0].url);
-          sessionStorage.setItem('userDisplayName', resp.data.display_name);
-          sessionStorage.setItem('userId', resp.data.id);
+          const tempUserInfo = {
+            userId: resp.data.id,
+            displayName: resp.data.display_name,
+            email: resp.data.email,
+            followers: resp.data.followers.total,
+            profileUrl: resp.data.images[0] ? resp.data.images[1].url : '',
+          };
+          setUserInfo(tempUserInfo);
         }
       })
       .catch((err) => {
         console.error(err);
       })
-      .finally(() => {});
+      .finally(() => {
+        // console.log(userInfo);
+      });
+  };
+
+  const userTopTrack = () => {
+    baseService.getJSON('/v1/me/top/tracks?limit=10').then((resp) => {
+      console.log(resp.data.items);
+    });
   };
 
   useEffect(() => {
     setToken();
     mainInfo();
+    userTopTrack();
   }, []);
   return (
     <MainLayout>
